@@ -1,0 +1,211 @@
+{
+	"info": {
+		"_postman_id": "9f22a463-9204-41cb-8a47-7852e2a478d3",
+		"name": "Suricato-fiap",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "Criar um novo Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"slug\": \"slug\",\r\n  \"title\": \"alagamento na cidade\",\r\n  \"description\": \"alagamento\",\r\n  \"userId\": 1,\r\n  \"address\": {\r\n    \"state\": \"SP\",\r\n    \"number\": \"123\",\r\n    \"city\": \"Osasco\",\r\n    \"complement\": \"123\",\r\n    \"zipCode\": \"12456-453\",\r\n    \"street\": \"Rua dos anjos\",\r\n    \"neighborhood\": \"2345\"\r\n  },\r\n  \"type\": \"ALAGAMENTO\",\r\n  \"images\": [\r\n    \"imagem\"\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post"
+							]
+						},
+						"description": "Cria um novo Post"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar uma resposta para o post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"postId\": 1,\r\n  \"externalLink\": \"https://prefeitura.org/exerternal-link\",\r\n  \"externalProtocal\": \"123412\",\r\n  \"status\": \"IN_PROGRESS\",\r\n  \"userId\": 1,\r\n  \"description\": \"Envio de unidades especializadas ao local\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post-reply",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post-reply"
+							]
+						},
+						"description": "Cria uma resposta da prefeitura para o Post"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar post por cidade e status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/city/Osasco/status/IN_PROGRESS",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"city",
+								"Osasco",
+								"status",
+								"IN_PROGRESS"
+							]
+						},
+						"description": "Lista todos os posts de uma cidade e status"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar post pelo usuário e status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/1/status/IN_PROGRESS",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"1",
+								"status",
+								"IN_PROGRESS"
+							]
+						},
+						"description": "Lista todos os posts pelo id do usuário e status"
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Post pelo id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"1"
+							]
+						},
+						"description": "Obtém um post pelo Id"
+					},
+					"response": []
+				}
+			],
+			"description": "Requisições para Post"
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Obter User pelo Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user",
+								"1"
+							]
+						},
+						"description": "Obtém um usuário pelo Id"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar um novo usuário",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"ana\",\r\n  \"birthday\": \"2021-04-25T21:30:53.037Z\",\r\n  \"type\": \"PREFEITURA\",\r\n  \"biography\": \"biografia\",\r\n  \"image\": \"image\",\r\n  \"phone\": {\r\n    \"ddd\": \"11\",\r\n    \"number\": \"1234532423\",\r\n    \"type\": \"COMMERCIAL\"\r\n  },\r\n  \"addressRequest\": {\r\n    \"state\": \"SP\",\r\n    \"number\": \"123\",\r\n    \"city\": \"Osasco\",\r\n    \"complement\": \"123\",\r\n    \"zipCode\": \"12456-453\",\r\n    \"street\": \"Rua dos anjos\",\r\n    \"neighborhood\": \"2345\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						},
+						"description": "Cria um novo usuário"
+					},
+					"response": []
+				}
+			],
+			"description": "Requisições para User"
+		}
+	]
+}
