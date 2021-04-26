@@ -143,6 +143,28 @@
 						"description": "Obtém um post pelo Id"
 					},
 					"response": []
+				},
+				{
+					"name": "Listar todos os Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post"
+							]
+						},
+						"description": "Lista todos os Post da base"
+					},
+					"response": []
 				}
 			],
 			"description": "Requisições para Post"
