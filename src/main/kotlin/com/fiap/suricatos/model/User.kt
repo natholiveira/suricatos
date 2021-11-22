@@ -41,7 +41,6 @@ data class User (
 
     @Column(name = "password")
     val password: String? = null
-
 ) {
     companion object {
         fun toModel(password: String, userRequest: UserRequest) = User(
