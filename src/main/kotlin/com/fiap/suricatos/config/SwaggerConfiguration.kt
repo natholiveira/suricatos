@@ -31,7 +31,7 @@ class SwaggerConfiguration {
                         "\n 1. Para acessar endpoints que iniciam com /api deve ser recuperado o token no /login e ser passado no " +
                         "header Authorization das requisições como Bearer {token}; \n " +
                         "2. para acessar /user (Cadastro de usuário) e /login não precisa passar o Authorization no header;\n " +
-                        "3. As requests que passam imagens como form-data deve ser passado o json(body) como form-data do tipo. string " +
+                        "3. As requests que passam imagens como form-data deve ser passado o json(body) como form-data do tipo string. " +
                         "Para ver o exemplo da string basta expandir o tópico nesta documentação e terá o exemplo logo abaixo;\n " +
                         "4. As fotos serão retornadas como url da amazon, basta acessar a url parar obter a imagem;")
                 .version("1.0")
