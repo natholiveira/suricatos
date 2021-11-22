@@ -1,4 +1,4 @@
-package com.fiap.suricatos.application
+package com.fiap.suricatos.controller
 
 import com.fiap.cyrela.exception.ErrorResponse
 import com.fiap.suricatos.exception.ApiException

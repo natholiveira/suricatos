@@ -5,7 +5,6 @@ import com.fiap.suricatos.util.Base64FileGenerator
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 
 
@@ -13,12 +12,10 @@ import java.util.*
 class Base64FileGeneratorImpl : Base64FileGenerator {
     override fun convertMultipartToFile(file: MultipartFile): File =
         try {
-            val file = File(Objects.requireNonNull(file.originalFilename))
-            val fileOutputStream = FileOutputStream(file)
-            fileOutputStream.write(file.readBytes())
-            fileOutputStream.close()
+            val convFile = File(System.getProperty("java.io.tmpdir") + "/" + file.originalFilename)
+            file.transferTo(convFile)
 
-            file
+            convFile
         } catch (ex: Exception) {
             throw Base64Exception(ex)
         }

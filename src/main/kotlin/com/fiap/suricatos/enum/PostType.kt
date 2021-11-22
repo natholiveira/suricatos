@@ -10,5 +10,11 @@ enum class PostType(val type: String) {
     QUEDA_DE_ARVORE("Queda de Árvore"),
     ARVORE_COM_RISCO_DE_QUEDA("Árvore com risco de queda"),
     FALTA_DE_ENERGIA("Falta de energia"),
+    VACINA("Vacina"),
+    COVID("Covid"),
+    PARQUE("Parque"),
+    ESPACO_LAZER("Espaço de lazer"),
+    PRACA("Praça"),
+    NOVIDADE("Novidade"),
     OUTROS("Outros")
 }

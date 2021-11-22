@@ -10,5 +10,5 @@ interface UserService {
     fun getUserResponse(userId: Long): UserResponse
     fun getUser(userId: Long): User?
     fun update(multipartFile: MultipartFile, userId: Long, userRequest: UserRequest): UserResponse
-
+    fun findAll(): List<User>
 }

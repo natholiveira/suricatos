@@ -1,5 +1,6 @@
 package com.fiap.suricatos.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fiap.suricatos.request.UserRequest
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -39,6 +40,7 @@ data class User (
     @Column(name = "email")
     val email: String? = null,
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password")
     val password: String? = null
 ) {

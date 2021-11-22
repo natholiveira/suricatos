@@ -20,8 +20,6 @@ data class UserRequest (
         @field:NotNull
         val phone: PhoneRequest,
 
-        val addressRequest: AddressRequest,
-
         @field:NotNull
         @field:NotBlank
         val email: String,

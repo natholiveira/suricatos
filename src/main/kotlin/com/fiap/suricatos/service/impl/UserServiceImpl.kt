@@ -2,41 +2,42 @@ package com.fiap.suricatos.service.impl
 
 import com.fiap.cyrela.exception.NotFoundExeption
 import com.fiap.suricatos.amazon.AmazonS3Service
+import com.fiap.suricatos.exception.DuplicatedUserException
 import com.fiap.suricatos.model.User
-import com.fiap.suricatos.model.UserAdress
 import com.fiap.suricatos.model.UserPhone
 import com.fiap.suricatos.model.UserPhoto
-import com.fiap.suricatos.repository.*
+import com.fiap.suricatos.repository.UserPhoneRepository
+import com.fiap.suricatos.repository.UserPhotoRepository
+import com.fiap.suricatos.repository.UserRepository
 import com.fiap.suricatos.request.UserRequest
 import com.fiap.suricatos.response.UserResponse
-import com.fiap.suricatos.service.AddressService
-import com.fiap.suricatos.service.ChiperService
 import com.fiap.suricatos.service.UserService
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
+
 
 @Service
 class UserServiceImpl(
         private val userRepository: UserRepository,
         private val amazonS3Service: AmazonS3Service,
         private val userPhoneRepository: UserPhoneRepository,
-        private val userAdressRepository: UserAdressRepository,
         private val userPhotoRepository: UserPhotoRepository,
-        private val addressService: AddressService,
-        private val chiperService: ChiperService
+        private val passwordEncoder: PasswordEncoder
 ) : UserService {
     override fun create(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse? {
 
-        val encryptedPassword = chiperService.encrypted(userRequest.password)
+        val encryptedPassword = passwordEncoder.encode(userRequest.password)
+
+        userRepository.findByEmail(userRequest.email)?.let {
+            throw DuplicatedUserException("User with email ${userRequest.email} already exist")
+        }
 
         val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
 
         val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
-
-        val address = addressService.createAddress(userRequest.addressRequest)
-        userAdressRepository.save(UserAdress.toModel(user, address))
 
         val url = amazonS3Service.uploadImageToAmazon(multipartFile)
 
@@ -44,7 +45,6 @@ class UserServiceImpl(
 
         return UserResponse(
                 user,
-                address,
                 phone,
                 url
         )
@@ -53,10 +53,9 @@ class UserServiceImpl(
     override fun getUserResponse(userId: Long): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundExeption("User $userId not found")
         val phones = userPhoneRepository.findAllByUserId(userId)
-        val address = userAdressRepository.findAllByUserId(userId)
         val images = userPhotoRepository.findAllByUserId(userId)
 
-        return UserResponse(user, address.last().address!!, phones.last(), images.last().image!!)
+        return UserResponse(user, phones.last(), images.last().image!!)
     }
 
     override fun getUser(userId: Long): User? =
@@ -73,7 +72,7 @@ class UserServiceImpl(
                         email = userRequest.email
                     )
                 )
-                val address = addressService.createAddress(userRequest.addressRequest)
+
                 val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
                 val url = amazonS3Service.uploadImageToAmazon(multipartFile)
@@ -82,10 +81,11 @@ class UserServiceImpl(
 
                 return UserResponse(
                         user,
-                        address,
                         phone,
                         url
                 )
             } ?: throw NotFoundExeption("User with id $userId not found")
+
+    override fun findAll(): List<User> = userRepository.findAll()
 
 }

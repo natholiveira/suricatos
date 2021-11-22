@@ -1,14 +1,17 @@
-package com.fiap.suricatos.application.controller
+package com.fiap.suricatos.controller
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fiap.suricatos.enum.Status
 import com.fiap.suricatos.exception.BadRequestExceptioin
 import com.fiap.suricatos.request.LikeRequest
 import com.fiap.suricatos.request.PostReplyRequest
 import com.fiap.suricatos.request.PostRequest
+import com.fiap.suricatos.response.PostResponse
 import com.fiap.suricatos.service.PostService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
+import io.swagger.annotations.Authorization
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -24,23 +27,24 @@ class PostController(
 ) {
 
     @PostMapping("/api/post")
-    @ApiOperation(value = "Create new Post")
+    @ApiOperation(value = "Create new Post", notes = "value to send in post param: \n" +POST_REQUEST_EXAMPLE,
+            authorizations = [Authorization(value = "Bearer {token}")])
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 201, message = "New post created"),
             ApiResponse(code = 400, message = "Bad Request"),
     ))
     fun createPost(
-            @RequestBody @Valid postRequest: PostRequest,
-            bindingResult: BindingResult,
-            @RequestPart(value = "images") images: List<MultipartFile>
-    ) =
-        if (bindingResult.hasErrors()) {
-            throw BadRequestExceptioin()
-        } else postService.createPost(postRequest, images)
+            @RequestParam("files")  files: List<MultipartFile>,
+            @RequestParam(value = "post") post: String
+    ): PostResponse {
+        val postRequest = jacksonObjectMapper().readValue(post, PostRequest::class.java)
+
+        return postService.createPost(postRequest, files)
+    }
 
     @PostMapping("/api/post-reply")
-    @ApiOperation(value = "Create new Post Reply")
+    @ApiOperation(value = "Create new Post Reply", authorizations = [Authorization(value = "Bearer {token}")])
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 201, message = "New post reply created"),
@@ -52,7 +56,7 @@ class PostController(
             } else postService.replyPost(postReplyRequest)
 
     @GetMapping("/api/post")
-    @ApiOperation(value = "List All post in the base")
+    @ApiOperation(value = "List All post in the base", authorizations = [Authorization(value = "Bearer {token}")])
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return post list"),
@@ -66,7 +70,7 @@ class PostController(
 
     @GetMapping("/api/post/{id}/status/{status}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "List All post by User id and Status")
+    @ApiOperation(value = "List All post by User id and Status", authorizations = [Authorization(value = "Bearer {token}")])
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return post list"),
             ApiResponse(code = 400, message = "Bad Request"),
@@ -82,7 +86,7 @@ class PostController(
 
     @GetMapping("/api/post/city/{city}/status/{status}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "List All post by City and Status")
+    @ApiOperation(value = "List All post by City and Status", authorizations = [Authorization(value = "Bearer {token}")])
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return post list"),
             ApiResponse(code = 400, message = "Bad Request"),
@@ -98,7 +102,7 @@ class PostController(
 
     @GetMapping("/api/post/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get Post by Id")
+    @ApiOperation(value = "Get Post by Id", authorizations = [Authorization(value = "Bearer {token}")])
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return post"),
             ApiResponse(code = 400, message = "Bad Request"),
@@ -112,7 +116,7 @@ class PostController(
                                   size = 10) pageable: Pageable) = postService.getPostResponse(id)
 
     @DeleteMapping("/api/post")
-    @ApiOperation(value = "Delete post")
+    @ApiOperation(value = "Delete post", authorizations = [Authorization(value = "Bearer {token}")])
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Delete post"),
@@ -123,15 +127,15 @@ class PostController(
 
     @GetMapping("/api/post/category")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all category")
+    @ApiOperation(value = "Get all category", authorizations = [Authorization(value = "Bearer {token}")])
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return post"),
     ))
     fun getAllCategory() = postService.getAllCategory()
 
     @PostMapping("/api/post/{postId}/like")
-    @ApiOperation(value = "Like or Unlike Post")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Like or Unlike Post", notes = "if like = true like post | if like = false deslike post", authorizations = [Authorization(value = "Bearer {token}")])
+    @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "OK"),
             ApiResponse(code = 400, message = "Bad Request"),
@@ -142,18 +146,41 @@ class PostController(
             } else postService.like(postId, likeRequest.like)
 
     @PutMapping("/api/post/{postId}")
-    @ApiOperation(value = "Update Post")
+    @ApiOperation(value = "Update Post", notes = "value to send in post param: \n" + POST_REQUEST_EXAMPLE,
+            authorizations = [Authorization(value = "Bearer {token}")])
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Update post"),
             ApiResponse(code = 400, message = "Bad Request"),
     ))
     fun update(
-            @RequestBody @Valid postRequest: PostRequest,
-            bindingResult: BindingResult,
-            @PathVariable postId: Long,
-            @RequestPart(value = "images") images: List<MultipartFile>
-    ) = if (bindingResult.hasErrors()) {
-            throw BadRequestExceptioin()
-        } else postService.update(postId, postRequest, images)
+            @RequestParam("files")  files: List<MultipartFile>,
+            @RequestParam(value = "post") post: String,
+            @PathVariable postId: Long
+    ): PostResponse {
+        val postRequest = jacksonObjectMapper().readValue(post, PostRequest::class.java)
+
+        return postService.update(postId, postRequest, files)
+    }
+
+    companion object {
+        const val POST_REQUEST_EXAMPLE = """
+            {
+                "slug": "slug",
+                "title": "title",
+                "description": "description",
+                "userId": 2,
+                "address": {
+                    "state": "SP",
+                    "number": "123",
+                    "city": "Osasco",
+                    "complement": "casa 2",
+                    "zipCode": "06216170",
+                    "street": "Rua Sebastião Tirador Fernades",
+                    "neighborhood": "Presidente Altino"
+                },
+                "type": "ALAGAMENTO"
+            }
+        """
+    }
 }

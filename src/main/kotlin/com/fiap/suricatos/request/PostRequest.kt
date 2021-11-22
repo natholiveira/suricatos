@@ -23,7 +23,5 @@ data class PostRequest (
         val address: AddressRequest? = null,
 
         @field:NotNull
-        val type: PostType? = null,
-
-        val images: List<String>
+        val type: PostType? = null
 )

@@ -21,6 +21,7 @@ import com.fiap.suricatos.service.UserService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
 
@@ -40,11 +41,14 @@ class PostServiceImpl(
         val address = postRequest.address?.let { addressService.createAddress(it) }
         val post = postRepository.save(Post.toModel(postRequest, user!!, address))
 
+        val imagesUrl = arrayListOf<String>()
         images.forEach {
             val url = amazonS3Service.uploadImageToAmazon(it)
             postPhotoRepository.save(PostPhoto.toModel(url, post))
+            imagesUrl.add(url)
         }
-        return PostResponse(post, null, arrayListOf(), postRequest.images)
+
+        return PostResponse(post, null, arrayListOf(), imagesUrl)
     }
 
     override fun replyPost(postReplyRequest: PostReplyRequest): PostReply {
@@ -126,14 +130,18 @@ class PostServiceImpl(
                     updateAt = OffsetDateTime.now()
             ))
 
-            postPhotoRepository.deleteByPostId(postId)
+            postPhotoRepository.findByPostId(postId).forEach {
+                postPhotoRepository.delete(it)
+            }
 
+            val imagesUrl = arrayListOf<String>()
             images.forEach {
                 val url = amazonS3Service.uploadImageToAmazon(it)
                 postPhotoRepository.save(PostPhoto.toModel(url, post))
+                imagesUrl.add(url)
             }
 
-            PostResponse(post, null, arrayListOf(), postRequest.images)
+            PostResponse(post, null, arrayListOf(), imagesUrl)
         } ?: throw NotFoundExeption("Post with id $postId not found")
 
     override fun delete(postId: Long) =
@@ -141,14 +149,13 @@ class PostServiceImpl(
              postRepository.delete(it)
          } ?: throw NotFoundExeption("Post with id $postId not found")
 
-    override fun getAllCategory(): List<PostType> =
-            PostType.values().toList()
+    override fun getAllCategory() = PostType.values().map { it.type }
 
     override fun like(postId: Long, like: Boolean) {
         postRepository.findByIdOrNull(postId)?.let { post ->
             var amountLike = post.like
 
-            if (like) amountLike.plus(1) else amountLike.minus(1)
+            amountLike = if (like) amountLike+1 else amountLike-1
 
             postRepository.save(post.copy(like = amountLike))
         } ?: throw NotFoundExeption("Post with id $postId not found")
