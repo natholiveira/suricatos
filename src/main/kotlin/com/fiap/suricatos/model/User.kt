@@ -39,7 +39,6 @@ data class User (
     @Column(name = "email")
     val email: String? = null,
 
-    @Transient
     @Column(name = "password")
     val password: String? = null
 
