@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PostPhotoRepository : JpaRepository<PostPhoto, Long> {
-    fun findAllByPostId(postId: Long): List<PostPhoto>
+    fun findByPostId(postId: Long): List<PostPhoto>
+    fun deleteByPostId(postId: Long)
 }

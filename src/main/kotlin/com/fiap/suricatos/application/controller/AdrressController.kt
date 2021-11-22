@@ -1,4 +1,4 @@
-package com.fiap.suricatos.controller
+package com.fiap.suricatos.application.controller
 
 import com.fiap.suricatos.exception.BadRequestExceptioin
 import com.fiap.suricatos.request.AddressRequest

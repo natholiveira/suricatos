@@ -6,8 +6,6 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 data class PostRequest (
-        @field:NotNull
-        @field:NotBlank
         val slug: String? = null,
 
         @field:NotNull
@@ -27,6 +25,5 @@ data class PostRequest (
         @field:NotNull
         val type: PostType? = null,
 
-        @field:NotNull
         val images: List<String>
 )

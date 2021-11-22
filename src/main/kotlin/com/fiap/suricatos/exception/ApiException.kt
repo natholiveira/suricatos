@@ -11,12 +11,12 @@ abstract class ApiException : Exception {
 
     abstract fun httpStatus(): HttpStatus
     abstract fun apiError(): ApiError
-    abstract fun userResponseMessage(): Any
+    abstract fun userResponseMessage(): String?
 
     fun createErrorResponse(): ErrorResponse {
         return ErrorResponse(
                 apiError(),
-                userResponseMessage()
+                userResponseMessage()!!
         )
     }
 }

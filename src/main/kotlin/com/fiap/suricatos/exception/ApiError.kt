@@ -4,5 +4,6 @@ enum class ApiError {
     NOT_FOUND,
     BAD_REQUEST,
     UNPROCESSABLE_IMAGE,
-    INVALID_STATUS
+    INVALID_STATUS,
+    UNAUTHORIZED
 }

@@ -1,6 +1,5 @@
 package com.fiap.suricatos.model
 
-import com.fiap.suricatos.enum.UserType
 import com.fiap.suricatos.request.UserRequest
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -8,6 +7,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.Date
 import javax.persistence.*
+import kotlin.jvm.Transient
 
 @Entity
 @Table(name = "user_u")
@@ -36,15 +36,24 @@ data class User (
     @Column(name = "type")
     val type: String? = null,
 
+    @Column(name = "email")
+    val email: String? = null,
+
+    @Transient
+    @Column(name = "password")
+    val password: String? = null
+
 ) {
     companion object {
-        fun toModel(userRequest: UserRequest) = User(
+        fun toModel(password: String, userRequest: UserRequest) = User(
                 name = userRequest.name,
                 birthday = userRequest.birthday,
                 biography = userRequest.biography,
                 type = userRequest.type?.type,
                 createdAt = OffsetDateTime.now(ZoneOffset.UTC),
-                updateAt =  OffsetDateTime.now(ZoneOffset.UTC)
+                updateAt =  OffsetDateTime.now(ZoneOffset.UTC),
+                email = userRequest.email,
+                password = password
         )
     }
 }

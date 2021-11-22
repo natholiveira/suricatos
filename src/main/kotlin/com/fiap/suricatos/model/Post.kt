@@ -48,6 +48,9 @@ data class Post (
         @Enumerated(EnumType.STRING)
         @Column(name = "status")
         val status: Status? = null,
+
+        @Column(name = "like_post")
+        val like: Int = 0,
 ) {
         companion object {
                 fun toModel(postRequest: PostRequest, user: User, address: Address?) = Post (

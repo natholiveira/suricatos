@@ -1,7 +1,8 @@
-package com.fiap.suricatos.controller
+package com.fiap.suricatos.application.controller
 
 import com.fiap.suricatos.enum.Status
 import com.fiap.suricatos.exception.BadRequestExceptioin
+import com.fiap.suricatos.request.LikeRequest
 import com.fiap.suricatos.request.PostReplyRequest
 import com.fiap.suricatos.request.PostRequest
 import com.fiap.suricatos.service.PostService
@@ -29,10 +30,14 @@ class PostController(
             ApiResponse(code = 201, message = "New post created"),
             ApiResponse(code = 400, message = "Bad Request"),
     ))
-    fun createPost(@RequestBody @Valid postRequest: PostRequest, bindingResult: BindingResult) =
+    fun createPost(
+            @RequestBody @Valid postRequest: PostRequest,
+            bindingResult: BindingResult,
+            @RequestPart(value = "images") images: List<MultipartFile>
+    ) =
         if (bindingResult.hasErrors()) {
             throw BadRequestExceptioin()
-        } else postService.createPost(postRequest)
+        } else postService.createPost(postRequest, images)
 
     @PostMapping("/api/post-reply")
     @ApiOperation(value = "Create new Post Reply")
@@ -106,4 +111,49 @@ class PostController(
                                   page = 0,
                                   size = 10) pageable: Pageable) = postService.getPostResponse(id)
 
+    @DeleteMapping("/api/post")
+    @ApiOperation(value = "Delete post")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponses(value = arrayOf(
+            ApiResponse(code = 200, message = "Delete post"),
+            ApiResponse(code = 404, message = "Post not found")
+    ))
+    fun delete(@PathVariable postId: Long) =
+            postService.delete(postId)
+
+    @GetMapping("/api/post/category")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get all category")
+    @ApiResponses(value = arrayOf(
+            ApiResponse(code = 200, message = "Return post"),
+    ))
+    fun getAllCategory() = postService.getAllCategory()
+
+    @PostMapping("/api/post/{postId}/like")
+    @ApiOperation(value = "Like or Unlike Post")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponses(value = arrayOf(
+            ApiResponse(code = 200, message = "OK"),
+            ApiResponse(code = 400, message = "Bad Request"),
+    ))
+    fun like(@RequestBody @Valid likeRequest: LikeRequest, @PathVariable postId: Long, bindingResult: BindingResult) =
+            if (bindingResult.hasErrors()) {
+                throw BadRequestExceptioin()
+            } else postService.like(postId, likeRequest.like)
+
+    @PutMapping("/api/post/{postId}")
+    @ApiOperation(value = "Update Post")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponses(value = arrayOf(
+            ApiResponse(code = 200, message = "Update post"),
+            ApiResponse(code = 400, message = "Bad Request"),
+    ))
+    fun update(
+            @RequestBody @Valid postRequest: PostRequest,
+            bindingResult: BindingResult,
+            @PathVariable postId: Long,
+            @RequestPart(value = "images") images: List<MultipartFile>
+    ) = if (bindingResult.hasErrors()) {
+            throw BadRequestExceptioin()
+        } else postService.update(postId, postRequest, images)
 }

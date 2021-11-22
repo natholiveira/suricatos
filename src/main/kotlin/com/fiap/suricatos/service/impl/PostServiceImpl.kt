@@ -1,11 +1,14 @@
 package com.fiap.suricatos.service.impl
 
 import com.fiap.cyrela.exception.NotFoundExeption
+import com.fiap.suricatos.amazon.AmazonS3Service
+import com.fiap.suricatos.enum.PostType
 import com.fiap.suricatos.enum.Status
 import com.fiap.suricatos.exception.InvalidStatusException
 import com.fiap.suricatos.model.Post
 import com.fiap.suricatos.model.PostPhoto
 import com.fiap.suricatos.model.PostReply
+import com.fiap.suricatos.repository.CommentRepository
 import com.fiap.suricatos.repository.PostPhotoRepository
 import com.fiap.suricatos.repository.PostReplyRepository
 import com.fiap.suricatos.repository.PostRepository
@@ -15,10 +18,11 @@ import com.fiap.suricatos.response.PostResponse
 import com.fiap.suricatos.service.AddressService
 import com.fiap.suricatos.service.PostService
 import com.fiap.suricatos.service.UserService
-import com.fiap.suricatos.util.Base64FileGenerator
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
+import java.time.OffsetDateTime
 
 @Service
 class PostServiceImpl(
@@ -27,17 +31,20 @@ class PostServiceImpl(
         private val postPhotoRepository: PostPhotoRepository,
         private val userService: UserService,
         private val addressService: AddressService,
-        private val base64FileGenerator: Base64FileGenerator
+        private val commentRepository: CommentRepository,
+        private val amazonS3Service: AmazonS3Service
 ) : PostService {
-    override fun createPost(postRequest: PostRequest): PostResponse {
+
+    override fun createPost(postRequest: PostRequest, images: List<MultipartFile>): PostResponse {
         val user = userService.getUser(postRequest.userId!!)
         val address = postRequest.address?.let { addressService.createAddress(it) }
         val post = postRepository.save(Post.toModel(postRequest, user!!, address))
 
-        postRequest.images.forEach {
-            postPhotoRepository.save(PostPhoto.toModel(it, post))
+        images.forEach {
+            val url = amazonS3Service.uploadImageToAmazon(it)
+            postPhotoRepository.save(PostPhoto.toModel(url, post))
         }
-        return PostResponse(post, null, postRequest.images)
+        return PostResponse(post, null, arrayListOf(), postRequest.images)
     }
 
     override fun replyPost(postReplyRequest: PostReplyRequest): PostReply {
@@ -59,18 +66,20 @@ class PostServiceImpl(
 
     override fun getPostResponse(postId: Long): PostResponse {
         val post = postRepository.findByIdOrNull(postId) ?: throw NotFoundExeption("Post $postId not found")
-        val postPhotos = postPhotoRepository.findAllByPostId(postId).map { it.image }
+        val postPhotos = postPhotoRepository.findByPostId(postId).map { it.image }
         val postReply = postReplyRepository.findAllByPostId(post.id!!)
+        val comments = commentRepository.findAllByPostId(post.id!!)
 
-        return PostResponse(post, postReply, postPhotos)
+        return PostResponse(post, postReply, comments, postPhotos)
     }
 
     override fun getAllPostByUserAndStatus(userId: Long, status: Status, pageable: Pageable): List<PostResponse> {
         val postList = arrayListOf<PostResponse>()
         postRepository.findAllByUserIdAndStatus(userId, status, pageable).forEach {
-            val postPhotos = postPhotoRepository.findAllByPostId(it.id!!).map { it.image }
+            val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
-            val postResponse = PostResponse(it, postReply, postPhotos)
+            val comments = commentRepository.findAllByPostId(it.id!!)
+            val postResponse = PostResponse(it, postReply, comments, postPhotos)
 
             postList.add(postResponse)
         }
@@ -81,9 +90,10 @@ class PostServiceImpl(
     override fun getAll(pageable: Pageable) : List<PostResponse> {
         val postList = arrayListOf<PostResponse>()
         postRepository.findAll(pageable).forEach {
-            val postPhotos = postPhotoRepository.findAllByPostId(it.id!!).map { it.image }
+            val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
-            val postResponse = PostResponse(it, postReply, postPhotos)
+            val comments = commentRepository.findAllByPostId(it.id!!)
+            val postResponse = PostResponse(it, postReply, comments, postPhotos)
 
             postList.add(postResponse)
         }
@@ -94,13 +104,53 @@ class PostServiceImpl(
     override fun getAllByStatusAndCity(city: String, status: Status, pageable: Pageable) : List<PostResponse> {
         val postList = arrayListOf<PostResponse>()
         postRepository.findAllByAddress_cityAndStatus(city, status, pageable).forEach {
-            val postPhotos = postPhotoRepository.findAllByPostId(it.id!!).map { it.image }
+            val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
-            val postResponse = PostResponse(it, postReply, postPhotos)
+            val comments = commentRepository.findAllByPostId(it.id!!)
+            val postResponse = PostResponse(it, postReply, comments, postPhotos)
 
             postList.add(postResponse)
         }
 
         return postList
+    }
+
+    override fun update(postId: Long, postRequest: PostRequest, images: List<MultipartFile>): PostResponse =
+        postRepository.findByIdOrNull(postId)?.let { post ->
+            val address = postRequest.address?.let { addressService.createAddress(it) }
+            postRepository.save(post.copy(
+                    title = postRequest.title,
+                    description = postRequest.description,
+                    type = postRequest.type,
+                    address = address,
+                    updateAt = OffsetDateTime.now()
+            ))
+
+            postPhotoRepository.deleteByPostId(postId)
+
+            images.forEach {
+                val url = amazonS3Service.uploadImageToAmazon(it)
+                postPhotoRepository.save(PostPhoto.toModel(url, post))
+            }
+
+            PostResponse(post, null, arrayListOf(), postRequest.images)
+        } ?: throw NotFoundExeption("Post with id $postId not found")
+
+    override fun delete(postId: Long) =
+         postRepository.findByIdOrNull(postId)?.let {
+             postRepository.delete(it)
+         } ?: throw NotFoundExeption("Post with id $postId not found")
+
+    override fun getAllCategory(): List<PostType> =
+            PostType.values().toList()
+
+    override fun like(postId: Long, like: Boolean) {
+        postRepository.findByIdOrNull(postId)?.let { post ->
+            var amountLike = post.like
+
+            if (like) amountLike.plus(1) else amountLike.minus(1)
+
+            postRepository.save(post.copy(like = amountLike))
+        } ?: throw NotFoundExeption("Post with id $postId not found")
     }
 }

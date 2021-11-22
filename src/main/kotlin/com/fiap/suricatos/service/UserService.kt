@@ -6,7 +6,9 @@ import com.fiap.suricatos.response.UserResponse
 import org.springframework.web.multipart.MultipartFile
 
 interface UserService {
-    fun createUser(userRequest: UserRequest): UserResponse?
+    fun create(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse?
     fun getUserResponse(userId: Long): UserResponse
     fun getUser(userId: Long): User?
+    fun update(multipartFile: MultipartFile, userId: Long, userRequest: UserRequest): UserResponse
+
 }

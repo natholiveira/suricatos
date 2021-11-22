@@ -1,10 +1,10 @@
 package com.fiap.suricatos.repository
 
-import com.fiap.suricatos.model.User
+import com.fiap.suricatos.model.Comment
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : JpaRepository<User, Long> {
-    fun findByEmail(email: String): User?
+interface CommentRepository : JpaRepository<Comment, Long> {
+    fun findAllByPostId(postId: Long): List<Comment>
 }

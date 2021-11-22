@@ -10,21 +10,23 @@ data class UserRequest (
         @field:NotBlank
         val name: String? = null,
 
-        @field:NotNull
         val birthday: Date? = null,
 
         @field:NotNull
         val type: UserType? = null,
 
-        @field:NotNull
         val biography: String? = null,
-
-        @field:NotNull
-        val image: String,
 
         @field:NotNull
         val phone: PhoneRequest,
 
+        val addressRequest: AddressRequest,
+
         @field:NotNull
-        val addressRequest: AddressRequest
+        @field:NotBlank
+        val email: String,
+
+        @field:NotNull
+        @field:NotBlank
+        val password: String
 )

@@ -1,7 +1,9 @@
-package com.fiap.suricatos.controller
+package com.fiap.suricatos.application.controller
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fiap.suricatos.exception.BadRequestExceptioin
 import com.fiap.suricatos.request.UserRequest
+import com.fiap.suricatos.response.UserResponse
 import com.fiap.suricatos.service.UserService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -18,16 +20,20 @@ class UserController(
 ) {
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/api/user")
+    @PostMapping("/user")
     @ApiOperation(value = "Create new User")
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 201, message = "Created new User"),
             ApiResponse(code = 400, message = "Bad Request")
     ))
-    fun createUser(@RequestBody @Valid userRequest: UserRequest, bindingResult: BindingResult) =
-            if (bindingResult.hasErrors()) {
-                throw BadRequestExceptioin()
-            } else userService.createUser(userRequest)
+    fun createUser(
+            @RequestParam("user") user: String,
+            @RequestParam("file")  file: MultipartFile
+    ): UserResponse? {
+        val userRequest = jacksonObjectMapper().readValue(user, UserRequest::class.java)
+
+        return userService.create(file, userRequest)
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/user/{id}")
@@ -39,5 +45,21 @@ class UserController(
     ))
     fun getUser(@PathVariable id: Long) =
             userService.getUserResponse(id)
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/api/user/{id}")
+    @ApiOperation(value = "Update User")
+    @ApiResponses(value = arrayOf(
+            ApiResponse(code = 201, message = "Update User"),
+            ApiResponse(code = 400, message = "Bad Request")
+    ))
+    fun update(
+            @RequestBody @Valid userRequest: UserRequest,
+            bindingResult: BindingResult,
+            @RequestPart(value = "image") image: MultipartFile,
+            @PathVariable id: Long
+    ) = if (bindingResult.hasErrors()) {
+            throw BadRequestExceptioin()
+        } else userService.update(image, id, userRequest)
 
 }

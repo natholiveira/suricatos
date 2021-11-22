@@ -1,4 +1,4 @@
-package com.fiap.suricatos.config
+package com.fiap.suricatos.application.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
