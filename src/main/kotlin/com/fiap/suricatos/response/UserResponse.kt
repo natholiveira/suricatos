@@ -5,6 +5,6 @@ import com.fiap.suricatos.model.UserPhone
 
 data class UserResponse (
         val user: User,
-        val phone: UserPhone,
-        val image: String,
+        val phone: UserPhone?,
+        val image: String?,
 )

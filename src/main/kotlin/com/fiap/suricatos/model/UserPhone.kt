@@ -1,5 +1,6 @@
 package com.fiap.suricatos.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fiap.suricatos.enum.PhoneType
 import com.fiap.suricatos.request.PhoneRequest
 import org.springframework.data.annotation.CreatedDate
@@ -15,6 +16,7 @@ data class UserPhone (
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long? = null,
 
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         @ManyToOne
         @JoinColumn(name="user_id", nullable=false, referencedColumnName = "id")
         val user: User? = null,

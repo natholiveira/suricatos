@@ -6,8 +6,5 @@ import javax.validation.constraints.NotNull
 data class CommentRequest(
         @field:NotNull
         @field:NotBlank
-        val message: String,
-
-        @field:NotNull
-        val userId: Long
+        val message: String
 )

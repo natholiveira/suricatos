@@ -29,7 +29,7 @@ class UserServiceImpl(
         private val passwordEncoder: PasswordEncoder,
         private val jwtDecoder: JWTDecoder
 ) : UserService {
-    override fun create(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse? {
+    override fun createWithImage(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse? {
 
         val encryptedPassword = passwordEncoder.encode(userRequest.password)
 
@@ -60,35 +60,78 @@ class UserServiceImpl(
         return UserResponse(user, phones.last(), images.last().image!!)
     }
 
-    override fun getUser(userId: Long, token: String): User? {
-        jwtDecoder.decodeJWT(token)
-        return userRepository.findByIdOrNull(userId) ?: throw NotFoundExeption("User $userId not found")
+    override fun getUserLogged(token: String): UserResponse {
+        val email = jwtDecoder.decodeJWT(token)
+        val user = userRepository.findByEmail(email) ?: throw NotFoundExeption("User with email $email not found")
+        val phones = userPhoneRepository.findAllByUserId(user.id!!)
+        val images = userPhotoRepository.findAllByUserId(user.id!!)
+
+        return UserResponse(user, phones.last(), images.last().image!!)
     }
 
-    override fun update(multipartFile: MultipartFile, userId: Long, userRequest: UserRequest): UserResponse =
-            userRepository.findByIdOrNull(userId)?.let { user ->
+    override fun getUser(token: String): User {
+        val email = jwtDecoder.decodeJWT(token)
+        return userRepository.findByEmail(email) ?: throw NotFoundExeption("User with email $email not found")
+    }
 
-                userRepository.save(user.copy(
-                        name = userRequest.name,
-                        biography = userRequest.biography,
-                        birthday = userRequest.birthday,
-                        updateAt = OffsetDateTime.now(),
-                        email = userRequest.email
-                )
-                )
+    override fun create(userRequest: UserRequest): UserResponse {
+        val encryptedPassword = passwordEncoder.encode(userRequest.password)
 
-                val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
+        userRepository.findByEmail(userRequest.email)?.let {
+            throw DuplicatedUserException("User with email ${userRequest.email} already exist")
+        }
 
-                val url = amazonS3Service.uploadImageToAmazon(multipartFile)
+        val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
 
-                userPhotoRepository.save(UserPhoto.toModel(url, user))
+        val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
-                return UserResponse(
-                        user,
-                        phone,
-                        url
-                )
-            } ?: throw NotFoundExeption("User with id $userId not found")
+        return UserResponse(
+                user,
+                phone,
+                null
+        )
+    }
+
+    override fun updateImage(multipartFile: MultipartFile, token: String): UserResponse {
+        val user = getUser(token)
+        val url = amazonS3Service.uploadImageToAmazon(multipartFile)
+
+        val phone = userPhoneRepository.findAllByUserId(user?.id!!)
+
+        userPhotoRepository.save(UserPhoto.toModel(url, user))
+
+        return UserResponse(
+                user,
+                phone.last(),
+                url
+        )
+    }
+
+    override fun update(token: String, userRequest: UserRequest): UserResponse {
+        val email = jwtDecoder.decodeJWT(token)
+
+        userRepository.findByEmail(email)?.let { user ->
+
+            userRepository.save(user.copy(
+                    name = userRequest.name,
+                    biography = userRequest.biography,
+                    birthday = userRequest.birthday,
+                    updateAt = OffsetDateTime.now(),
+                    email = userRequest.email
+            )
+            )
+
+            val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
+
+            val image = userPhotoRepository.findAllByUserId(userId = user?.id!!).last()
+
+            return UserResponse(
+                    user,
+                    phone,
+                    image?.image
+            )
+        } ?: throw NotFoundExeption("User with email $email not found")
+    }
 
     override fun findAll(): List<User> = userRepository.findAll()
 

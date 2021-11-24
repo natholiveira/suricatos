@@ -3,6 +3,7 @@ package com.fiap.suricatos.controller
 import com.fiap.suricatos.exception.BadRequestExceptioin
 import com.fiap.suricatos.request.CommentRequest
 import com.fiap.suricatos.service.CommentService
+import com.fiap.suricatos.service.UserService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
@@ -25,10 +26,10 @@ class CommentController(
             ApiResponse(code = 400, message = "Bad Request"),
             ApiResponse(code = 404, message = "Post not found"),
     ))
-    fun create(@RequestBody @Valid commentRequest: CommentRequest, @PathVariable postId: Long, bindingResult: BindingResult) =
+    fun create(@RequestBody @Valid commentRequest: CommentRequest, @PathVariable postId: Long, bindingResult: BindingResult,  @RequestHeader("Authorization") token: String) =
             if (bindingResult.hasErrors()) {
                 throw BadRequestExceptioin()
-            } else commentService.create(postId, commentRequest)
+            } else commentService.create(postId, commentRequest, token)
 
 
     @ResponseStatus(HttpStatus.OK)

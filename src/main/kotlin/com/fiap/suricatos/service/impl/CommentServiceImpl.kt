@@ -7,6 +7,7 @@ import com.fiap.suricatos.repository.PostRepository
 import com.fiap.suricatos.repository.UserRepository
 import com.fiap.suricatos.request.CommentRequest
 import com.fiap.suricatos.service.CommentService
+import com.fiap.suricatos.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -18,13 +19,15 @@ class CommentServiceImpl(
     @Autowired
     private val userRepository: UserRepository,
     @Autowired
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val userService: UserService
 ) : CommentService {
-    override fun create(postId: Long, commentRequest: CommentRequest): Comment =
+    override fun create(postId: Long, commentRequest: CommentRequest, token: String): Comment =
         postRepository.findByIdOrNull(postId)?.let { post ->
-            userRepository.findByIdOrNull(commentRequest.userId)?.let { user ->
+            val user = userService.getUser(token)
+            userRepository.findByIdOrNull(user?.id)?.let { user ->
                 commentRepository.save(Comment.toModel(post, user, commentRequest))
-            } ?: throw NotFoundExeption("User with id ${commentRequest.userId} not found")
+            } ?: throw NotFoundExeption("User with id ${user?.id} not found")
         } ?: throw NotFoundExeption("Post with id $postId not found")
 
     override fun update(commentId: Long, commentRequest: CommentRequest): Comment =

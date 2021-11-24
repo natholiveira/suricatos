@@ -20,9 +20,6 @@ data class PostReplyRequest (
         val status: Status? = null,
 
         @field:NotNull
-        val userId: Long? = null,
-
-        @field:NotNull
         @field:NotBlank
         val description: String? = null,
 )

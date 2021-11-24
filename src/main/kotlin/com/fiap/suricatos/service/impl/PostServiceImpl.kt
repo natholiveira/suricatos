@@ -15,6 +15,7 @@ import com.fiap.suricatos.repository.PostRepository
 import com.fiap.suricatos.request.PostReplyRequest
 import com.fiap.suricatos.request.PostRequest
 import com.fiap.suricatos.response.PostResponse
+import com.fiap.suricatos.security.JWTDecoder
 import com.fiap.suricatos.service.AddressService
 import com.fiap.suricatos.service.PostService
 import com.fiap.suricatos.service.UserService
@@ -33,11 +34,12 @@ class PostServiceImpl(
         private val userService: UserService,
         private val addressService: AddressService,
         private val commentRepository: CommentRepository,
-        private val amazonS3Service: AmazonS3Service
+        private val amazonS3Service: AmazonS3Service,
+        private val jwtDecoder: JWTDecoder
 ) : PostService {
 
-    override fun createPost(postRequest: PostRequest, images: List<MultipartFile>): PostResponse {
-        val user = userService.getUser(postRequest.userId!!, "")
+    override fun createPost(postRequest: PostRequest, images: List<MultipartFile>, token: String): PostResponse {
+        val user = userService.getUser(jwtDecoder.decodeJWT(token))
         val address = postRequest.address?.let { addressService.createAddress(it) }
         val post = postRepository.save(Post.toModel(postRequest, user!!, address))
 
@@ -51,13 +53,13 @@ class PostServiceImpl(
         return PostResponse(post, null, arrayListOf(), imagesUrl)
     }
 
-    override fun replyPost(postReplyRequest: PostReplyRequest): PostReply {
+    override fun replyPost(postReplyRequest: PostReplyRequest, token: String): PostReply {
         val validStatus = arrayOf(Status.IN_PROGRESS, Status.CONCLUDED)
 
         if (!validStatus.contains(postReplyRequest.status))
             throw InvalidStatusException("Status ${postReplyRequest.status} is invalid")
 
-        val user = userService.getUser(postReplyRequest.userId!!, "")
+        val user = userService.getUser(jwtDecoder.decodeJWT(token))
 
         val post = getPost(postReplyRequest.postId!!)
         val postUpdate = postRepository.save(post.copy(status = postReplyRequest.status))
@@ -77,9 +79,10 @@ class PostServiceImpl(
         return PostResponse(post, postReply, comments, postPhotos)
     }
 
-    override fun getAllPostByUserAndStatus(userId: Long, status: Status, pageable: Pageable): List<PostResponse> {
+    override fun getAllPostByUserAndStatus(token: String, status: Status, pageable: Pageable): List<PostResponse> {
         val postList = arrayListOf<PostResponse>()
-        postRepository.findAllByUserIdAndStatus(userId, status, pageable).forEach {
+        val user = userService.getUser(token)
+        postRepository.findAllByUserIdAndStatus(user?.id!!, status, pageable).forEach {
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)

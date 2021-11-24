@@ -17,9 +17,6 @@ data class PostRequest (
         val description: String? = null,
 
         @field:NotNull
-        val userId: Long? = null,
-
-        @field:NotNull
         val address: AddressRequest? = null,
 
         @field:NotNull

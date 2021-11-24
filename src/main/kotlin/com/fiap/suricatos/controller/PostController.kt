@@ -36,11 +36,12 @@ class PostController(
     ))
     fun createPost(
             @RequestParam("files")  files: List<MultipartFile>,
-            @RequestParam(value = "post") post: String
+            @RequestParam(value = "post") post: String,
+            @RequestHeader("Authorization") token: String
     ): PostResponse {
         val postRequest = jacksonObjectMapper().readValue(post, PostRequest::class.java)
 
-        return postService.createPost(postRequest, files)
+        return postService.createPost(postRequest, files, token)
     }
 
     @PostMapping("/api/post-reply")
@@ -50,10 +51,10 @@ class PostController(
             ApiResponse(code = 201, message = "New post reply created"),
             ApiResponse(code = 400, message = "Bad Request"),
     ))
-    fun createPostReply(@RequestBody @Valid postReplyRequest: PostReplyRequest, bindingResult: BindingResult) =
+    fun createPostReply(@RequestBody @Valid postReplyRequest: PostReplyRequest, bindingResult: BindingResult, @RequestHeader("Authorization") token: String) =
             if (bindingResult.hasErrors()) {
                 throw BadRequestExceptioin()
-            } else postService.replyPost(postReplyRequest)
+            } else postService.replyPost(postReplyRequest, token)
 
     @GetMapping("/api/post")
     @ApiOperation(value = "List All post in the base", authorizations = [Authorization(value = "Bearer {token}")])
@@ -68,9 +69,9 @@ class PostController(
             size = 10) pageable: Pageable) =
             postService.getAll(pageable)
 
-    @GetMapping("/api/post/{id}/status/{status}")
+    @GetMapping("/api/post/user/status/{status}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "List All post by User id and Status", authorizations = [Authorization(value = "Bearer {token}")])
+    @ApiOperation(value = "List All post of User logged and Status", authorizations = [Authorization(value = "Bearer {token}")])
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return post list"),
             ApiResponse(code = 400, message = "Bad Request"),
@@ -82,7 +83,8 @@ class PostController(
                    sort = arrayOf("createdAt"),
                    direction = Sort.Direction.DESC,
                    page = 0,
-                   size = 10) pageable: Pageable) = postService.getAllPostByUserAndStatus(id, status, pageable)
+                   size = 10) pageable: Pageable,
+                   @RequestHeader("Authorization") token: String) = postService.getAllPostByUserAndStatus(token, status, pageable)
 
     @GetMapping("/api/post/city/{city}/status/{status}")
     @ResponseStatus(HttpStatus.OK)
