@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
-
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import kotlin.jvm.Throws
 
@@ -34,7 +33,13 @@ class SecurityConfig(
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.csrf().disable().cors().disable()
+
+        val source = UrlBasedCorsConfigurationSource()
+
+        val corsConfiguration = CorsConfiguration().applyPermitDefaultValues()
+        source.registerCorsConfiguration("/**", corsConfiguration)
+
+        http.csrf().disable().cors().configurationSource(source).and()
                 .authorizeRequests()
                 .antMatchers("/login", "/user", "/swagger-ui.html", "/swagger-ui.html#", "/swagger-ui.html#/","/v2/api-docs",
                         "/configuration/ui",
