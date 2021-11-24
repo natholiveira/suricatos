@@ -37,7 +37,7 @@ class PostServiceImpl(
 ) : PostService {
 
     override fun createPost(postRequest: PostRequest, images: List<MultipartFile>): PostResponse {
-        val user = userService.getUser(postRequest.userId!!)
+        val user = userService.getUser(postRequest.userId!!, "")
         val address = postRequest.address?.let { addressService.createAddress(it) }
         val post = postRepository.save(Post.toModel(postRequest, user!!, address))
 
@@ -57,7 +57,7 @@ class PostServiceImpl(
         if (!validStatus.contains(postReplyRequest.status))
             throw InvalidStatusException("Status ${postReplyRequest.status} is invalid")
 
-        val user = userService.getUser(postReplyRequest.userId!!)
+        val user = userService.getUser(postReplyRequest.userId!!, "")
 
         val post = getPost(postReplyRequest.postId!!)
         val postUpdate = postRepository.save(post.copy(status = postReplyRequest.status))

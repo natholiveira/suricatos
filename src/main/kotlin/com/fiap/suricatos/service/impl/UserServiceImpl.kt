@@ -11,9 +11,10 @@ import com.fiap.suricatos.repository.UserPhotoRepository
 import com.fiap.suricatos.repository.UserRepository
 import com.fiap.suricatos.request.UserRequest
 import com.fiap.suricatos.response.UserResponse
+import com.fiap.suricatos.security.JWTDecoder
 import com.fiap.suricatos.service.UserService
 import org.springframework.data.repository.findByIdOrNull
-
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
@@ -24,16 +25,19 @@ class UserServiceImpl(
         private val userRepository: UserRepository,
         private val amazonS3Service: AmazonS3Service,
         private val userPhoneRepository: UserPhoneRepository,
-        private val userPhotoRepository: UserPhotoRepository
+        private val userPhotoRepository: UserPhotoRepository,
+        private val passwordEncoder: PasswordEncoder,
+        private val jwtDecoder: JWTDecoder
 ) : UserService {
     override fun create(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse? {
 
+        val encryptedPassword = passwordEncoder.encode(userRequest.password)
 
         userRepository.findByEmail(userRequest.email)?.let {
             throw DuplicatedUserException("User with email ${userRequest.email} already exist")
         }
 
-        val user = userRepository.save(User.toModel(password = userRequest.password, userRequest = userRequest))
+        val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
 
         val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
@@ -56,8 +60,10 @@ class UserServiceImpl(
         return UserResponse(user, phones.last(), images.last().image!!)
     }
 
-    override fun getUser(userId: Long): User? =
-            userRepository.findByIdOrNull(userId) ?: throw NotFoundExeption("User $userId not found")
+    override fun getUser(userId: Long, token: String): User? {
+        jwtDecoder.decodeJWT(token)
+        return userRepository.findByIdOrNull(userId) ?: throw NotFoundExeption("User $userId not found")
+    }
 
     override fun update(multipartFile: MultipartFile, userId: Long, userRequest: UserRequest): UserResponse =
             userRepository.findByIdOrNull(userId)?.let { user ->
@@ -68,7 +74,7 @@ class UserServiceImpl(
                         birthday = userRequest.birthday,
                         updateAt = OffsetDateTime.now(),
                         email = userRequest.email
-                    )
+                )
                 )
 
                 val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))

@@ -41,8 +41,8 @@ class UserController(
             ApiResponse(code = 400, message = "Bad Request"),
             ApiResponse(code = 404, message = "User Not Found")
     ))
-    fun getUser(@PathVariable id: Long) =
-            userService.getUserResponse(id)
+    fun getUser(@PathVariable id: Long, @RequestHeader("Authorization") token: String) =
+            userService.getUser(id, token)
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/user/{id}")
