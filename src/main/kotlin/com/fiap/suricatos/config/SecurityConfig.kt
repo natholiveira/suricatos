@@ -6,7 +6,6 @@ import com.fiap.suricatos.service.impl.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -35,6 +34,17 @@ class SecurityConfig(
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("POST");
+
+        source.registerCorsConfiguration("/**", config);
+
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/login", "/user", "/swagger-ui.html", "/swagger-ui.html#", "/swagger-ui.html#/","/v2/api-docs",
                         "/configuration/ui",
@@ -49,11 +59,14 @@ class SecurityConfig(
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
+
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource? {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = arrayListOf("*")
+        configuration.allowedMethods = arrayListOf("GET", "POST","PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
         val source = UrlBasedCorsConfigurationSource()
-        val corsConfiguration = CorsConfiguration().applyPermitDefaultValues()
-        source.registerCorsConfiguration("/**", corsConfiguration)
+        source.registerCorsConfiguration("/**", configuration)
         return source
     }
 
