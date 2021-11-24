@@ -77,7 +77,7 @@ class PostController(
             ApiResponse(code = 400, message = "Bad Request"),
             ApiResponse(code = 404, message = "User not Found")
     ))
-    fun getAllByIdAndStatus(@PathVariable id: Long,
+    fun getAllByIdAndStatus(
                    @PathVariable status: Status,
                    @PageableDefault(
                    sort = arrayOf("createdAt"),

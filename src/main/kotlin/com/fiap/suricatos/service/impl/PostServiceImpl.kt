@@ -59,7 +59,7 @@ class PostServiceImpl(
         if (!validStatus.contains(postReplyRequest.status))
             throw InvalidStatusException("Status ${postReplyRequest.status} is invalid")
 
-        val user = userService.getUser(jwtDecoder.decodeJWT(token))
+        val user = userService.getUser(token)
 
         val post = getPost(postReplyRequest.postId!!)
         val postUpdate = postRepository.save(post.copy(status = postReplyRequest.status))
