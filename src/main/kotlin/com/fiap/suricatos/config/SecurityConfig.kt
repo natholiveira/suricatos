@@ -41,7 +41,7 @@ class SecurityConfig(
 
         http.csrf().disable().cors().configurationSource(source).and()
                 .authorizeRequests()
-                .antMatchers("/login", "/user", "/swagger-ui.html", "/swagger-ui.html#", "/swagger-ui.html#/","/v2/api-docs",
+                .antMatchers("/login", "/user", "/swagger-ui.html", "/swagger-ui.html#", "/swagger-ui.html#/","/v2/api-docs", "/user/image",
                         "/configuration/ui",
                         "/swagger-resources/**",
                         "/configuration/security",
