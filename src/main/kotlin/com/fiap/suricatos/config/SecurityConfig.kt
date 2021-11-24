@@ -37,13 +37,7 @@ class SecurityConfig(
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
 
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("POST");
 
-        source.registerCorsConfiguration("/**", config);
 
         http.csrf().disable().cors().and().authorizeRequests()
                 .antMatchers("/login", "/user", "/swagger-ui.html", "/swagger-ui.html#", "/swagger-ui.html#/","/v2/api-docs",
@@ -57,17 +51,6 @@ class SecurityConfig(
                 .addFilter(JWTAuthenticateFilter(authenticationManager()))
                 .addFilter(JWTValidatorFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    }
-
-
-    @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource? {
-        val configuration = CorsConfiguration()
-        configuration.allowedOrigins = arrayListOf("http://localhost:3000")
-        configuration.allowedMethods = arrayListOf("GET", "POST","PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", configuration)
-        return source
     }
 
     @Bean
