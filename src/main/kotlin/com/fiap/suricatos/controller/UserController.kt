@@ -96,7 +96,6 @@ class UserController(
     ))
     fun update(
             @RequestBody @Valid user: UserRequest,
-            @PathVariable id: Long,
             @RequestHeader("Authorization") token: String
     ): UserResponse {
         return userService.update(token, user)
