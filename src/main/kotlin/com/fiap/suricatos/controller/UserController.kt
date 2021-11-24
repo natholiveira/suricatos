@@ -76,14 +76,14 @@ class UserController(
             userService.getUserResponse(id)
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/api/user/logged}")
+    @GetMapping("/api/user/logged")
     @ApiOperation(value = "Get user by Id", authorizations = [Authorization(value = "Bearer {token}")])
     @ApiResponses(value = arrayOf(
             ApiResponse(code = 200, message = "Return user"),
             ApiResponse(code = 400, message = "Bad Request"),
             ApiResponse(code = 404, message = "User Not Found")
     ))
-    fun getUserLogged(@PathVariable id: Long, @RequestHeader("Authorization") token: String) =
+    fun getUserLogged(@RequestHeader("Authorization") token: String) =
             userService.getUserLogged(token)
 
     @ResponseStatus(HttpStatus.OK)
