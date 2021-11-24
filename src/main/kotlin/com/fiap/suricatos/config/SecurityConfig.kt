@@ -34,7 +34,8 @@ class SecurityConfig(
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.csrf().disable().cors().and().authorizeRequests()
+        http.csrf().disable().cors().disable()
+                .authorizeRequests()
                 .antMatchers("/login", "/user", "/swagger-ui.html", "/swagger-ui.html#", "/swagger-ui.html#/","/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
