@@ -39,7 +39,7 @@ class PostServiceImpl(
 ) : PostService {
 
     override fun createPost(postRequest: PostRequest, images: List<MultipartFile>, token: String): PostResponse {
-        val user = userService.getUser(jwtDecoder.decodeJWT(token))
+        val user = userService.getUser(token)
         val address = postRequest.address?.let { addressService.createAddress(it) }
         val post = postRepository.save(Post.toModel(postRequest, user!!, address))
 
