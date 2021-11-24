@@ -13,7 +13,7 @@ import com.fiap.suricatos.request.UserRequest
 import com.fiap.suricatos.response.UserResponse
 import com.fiap.suricatos.service.UserService
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.security.crypto.password.PasswordEncoder
+
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
@@ -24,18 +24,16 @@ class UserServiceImpl(
         private val userRepository: UserRepository,
         private val amazonS3Service: AmazonS3Service,
         private val userPhoneRepository: UserPhoneRepository,
-        private val userPhotoRepository: UserPhotoRepository,
-        private val passwordEncoder: PasswordEncoder
+        private val userPhotoRepository: UserPhotoRepository
 ) : UserService {
     override fun create(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse? {
 
-        val encryptedPassword = passwordEncoder.encode(userRequest.password)
 
         userRepository.findByEmail(userRequest.email)?.let {
             throw DuplicatedUserException("User with email ${userRequest.email} already exist")
         }
 
-        val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
+        val user = userRepository.save(User.toModel(password = userRequest.password, userRequest = userRequest))
 
         val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
