@@ -41,8 +41,8 @@ class UserServiceImpl(
 
         val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
 
-        userRequest.addressRequest?.let {
-            val address = addressService.createAddress(userRequest.addressRequest)
+        userRequest.address?.let {
+            val address = addressService.createAddress(userRequest.address)
             userAddressRepository.save(UserAdress.toModel(user, address))
         }
 
@@ -92,8 +92,8 @@ class UserServiceImpl(
 
         val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
-        userRequest.addressRequest?.let {
-            val address = addressService.createAddress(userRequest.addressRequest)
+        userRequest.address?.let {
+            val address = addressService.createAddress(userRequest.address)
             userAddressRepository.save(UserAdress.toModel(user, address))
         }
 

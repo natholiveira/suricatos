@@ -111,18 +111,27 @@ class UserController(
 
     companion object {
         const val USER_REQUEST_EXAMPLE = """
-           {
-              "name": "nome",
-              "birthday": "2021-11-21T19:46:50.598Z",
-              "type": "CIDADAO",
-              "biography": "biografia",
-              "phone": {
-                "ddd": "11",
-                "number": "235264627",
-                "type": "CELL"
-              },
-              "email": "vo.nathalia12@gmail.com",
-              "password": "12345"
+            {
+                "name": "nathalia",
+                "birthday": "2021-11-21T19:46:50.598Z",
+                "type": "PREFEITURA",
+                "biography": "teste",
+                "phone": {
+                    "ddd": "11",
+                    "number": "235264627",
+                    "type": "COMMERCIAL"
+                },
+                "address": {
+                    "state": "SP",
+                    "number": "123",
+                    "city": "Osasco",
+                    "complement": "casa 2",
+                    "zipCode": "06216170",
+                    "street": "Rua Sebastião Tirador Fernades",
+                    "neighborhood": "Presidente Altino"
+                },
+                "email": "vo.nathalia126@gmail.com",
+                "password": "12345"
             }
         """
     }
