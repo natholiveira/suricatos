@@ -54,7 +54,7 @@ class JWTAuthenticateFilter(authenticationManager: AuthenticationManager) : User
     }
 
     companion object {
-        const val TOKEN_EXPIRACAO = 600_000
+        const val TOKEN_EXPIRACAO = 60000_000
         const val TOKEN_SENHA = "463408a1-54c9-4307-bb1c-6cced559f5a7"
     }
 }
