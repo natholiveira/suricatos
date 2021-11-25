@@ -26,5 +26,7 @@ data class UserRequest (
 
         @field:NotNull
         @field:NotBlank
-        val password: String
+        val password: String,
+
+        val address: AddressRequest? = null
 )

@@ -8,5 +8,6 @@ data class PostResponse(
         val post: Post,
         val postReply: List<PostReply>?,
         val comments: List<Comment>,
-        val images: List<String?>
+        val images: List<String?>,
+        val userImage: String?
 )

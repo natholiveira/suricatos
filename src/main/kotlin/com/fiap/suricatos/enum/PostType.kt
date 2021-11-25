@@ -16,5 +16,6 @@ enum class PostType(val type: String) {
     ESPACO_LAZER("Espaço de lazer"),
     PRACA("Praça"),
     NOVIDADE("Novidade"),
+    CAMPANHA("Campanha"),
     OUTROS("Outros")
 }

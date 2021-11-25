@@ -102,6 +102,23 @@ class PostController(
                            page = 0,
                            size = 10) pageable: Pageable) = postService.getAllByStatusAndCity(city, status, pageable)
 
+    @GetMapping("/api/post/user/city/status/{status}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "List All post by City of logged user and Status", authorizations = [Authorization(value = "Bearer {token}")])
+    @ApiResponses(value = arrayOf(
+            ApiResponse(code = 200, message = "Return post list"),
+            ApiResponse(code = 400, message = "Bad Request"),
+            ApiResponse(code = 404, message = "City not Found")
+    ))
+    fun getAllByUserAndCity(
+                          @PathVariable status: Status,
+                          @PageableDefault(
+                                  sort = arrayOf("createdAt"),
+                                  direction = Sort.Direction.DESC,
+                                  page = 0,
+                                  size = 10) pageable: Pageable,
+                            @RequestHeader("Authorization") token: String) = postService.getAllUserAddressByUserAndStatus(token, status, pageable)
+
     @GetMapping("/api/post/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get Post by Id", authorizations = [Authorization(value = "Bearer {token}")])

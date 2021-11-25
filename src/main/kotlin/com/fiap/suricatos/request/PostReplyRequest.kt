@@ -9,12 +9,10 @@ data class PostReplyRequest (
         val postId: Long? = null,
 
         @field:NotNull
-        @field:NotBlank
-        val externalLink: String? = null,
+        val externalLink: String? = "",
 
         @field:NotNull
-        @field:NotBlank
-        val externalProtocal: String? = null,
+        val externalProtocal: String? = "",
 
         @field:NotNull
         val status: Status? = null,

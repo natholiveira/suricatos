@@ -42,7 +42,8 @@ data class User (
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password")
-    val password: String? = null
+    val password: String? = null,
+
 ) {
     companion object {
         fun toModel(password: String, userRequest: UserRequest) = User(

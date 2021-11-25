@@ -3,15 +3,15 @@ package com.fiap.suricatos.service.impl
 import com.fiap.cyrela.exception.NotFoundExeption
 import com.fiap.suricatos.amazon.AmazonS3Service
 import com.fiap.suricatos.exception.DuplicatedUserException
-import com.fiap.suricatos.model.User
-import com.fiap.suricatos.model.UserPhone
-import com.fiap.suricatos.model.UserPhoto
+import com.fiap.suricatos.model.*
+import com.fiap.suricatos.repository.UserAdressRepository
 import com.fiap.suricatos.repository.UserPhoneRepository
 import com.fiap.suricatos.repository.UserPhotoRepository
 import com.fiap.suricatos.repository.UserRepository
 import com.fiap.suricatos.request.UserRequest
 import com.fiap.suricatos.response.UserResponse
 import com.fiap.suricatos.security.JWTDecoder
+import com.fiap.suricatos.service.AddressService
 import com.fiap.suricatos.service.UserService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -27,6 +27,8 @@ class UserServiceImpl(
         private val userPhoneRepository: UserPhoneRepository,
         private val userPhotoRepository: UserPhotoRepository,
         private val passwordEncoder: PasswordEncoder,
+        private val addressService: AddressService,
+        private val userAddressRepository: UserAdressRepository,
         private val jwtDecoder: JWTDecoder
 ) : UserService {
     override fun createWithImage(multipartFile: MultipartFile, userRequest: UserRequest): UserResponse? {
@@ -38,6 +40,11 @@ class UserServiceImpl(
         }
 
         val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
+
+        userRequest.addressRequest?.let {
+            val address = addressService.createAddress(userRequest.addressRequest)
+            userAddressRepository.save(UserAdress.toModel(user, address))
+        }
 
         val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
@@ -84,6 +91,11 @@ class UserServiceImpl(
         val user = userRepository.save(User.toModel(encryptedPassword, userRequest))
 
         val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
+
+        userRequest.addressRequest?.let {
+            val address = addressService.createAddress(userRequest.addressRequest)
+            userAddressRepository.save(UserAdress.toModel(user, address))
+        }
 
         return UserResponse(
                 user,

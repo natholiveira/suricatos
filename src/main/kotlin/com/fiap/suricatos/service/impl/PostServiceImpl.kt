@@ -8,12 +8,10 @@ import com.fiap.suricatos.exception.InvalidStatusException
 import com.fiap.suricatos.model.Post
 import com.fiap.suricatos.model.PostPhoto
 import com.fiap.suricatos.model.PostReply
-import com.fiap.suricatos.repository.CommentRepository
-import com.fiap.suricatos.repository.PostPhotoRepository
-import com.fiap.suricatos.repository.PostReplyRepository
-import com.fiap.suricatos.repository.PostRepository
+import com.fiap.suricatos.repository.*
 import com.fiap.suricatos.request.PostReplyRequest
 import com.fiap.suricatos.request.PostRequest
+import com.fiap.suricatos.response.CategoryResponse
 import com.fiap.suricatos.response.PostResponse
 import com.fiap.suricatos.security.JWTDecoder
 import com.fiap.suricatos.service.AddressService
@@ -35,7 +33,9 @@ class PostServiceImpl(
         private val addressService: AddressService,
         private val commentRepository: CommentRepository,
         private val amazonS3Service: AmazonS3Service,
-        private val jwtDecoder: JWTDecoder
+        private val jwtDecoder: JWTDecoder,
+        private val userPhotoRepository: UserPhotoRepository,
+        private val userAdressRepository: UserAdressRepository
 ) : PostService {
 
     override fun createPost(postRequest: PostRequest, images: List<MultipartFile>, token: String): PostResponse {
@@ -50,7 +50,9 @@ class PostServiceImpl(
             imagesUrl.add(url)
         }
 
-        return PostResponse(post, null, arrayListOf(), imagesUrl)
+        val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!)
+
+        return PostResponse(post, null, arrayListOf(), imagesUrl, photoUser.last().image)
     }
 
     override fun replyPost(postReplyRequest: PostReplyRequest, token: String): PostReply {
@@ -75,8 +77,9 @@ class PostServiceImpl(
         val postPhotos = postPhotoRepository.findByPostId(postId).map { it.image }
         val postReply = postReplyRepository.findAllByPostId(post.id!!)
         val comments = commentRepository.findAllByPostId(post.id!!)
+        val photoUser = userPhotoRepository.findAllByUserId(userId = post.user?.id!!)
 
-        return PostResponse(post, postReply, comments, postPhotos)
+        return PostResponse(post, postReply, comments, postPhotos, photoUser.last().image)
     }
 
     override fun getAllPostByUserAndStatus(token: String, status: Status, pageable: Pageable): List<PostResponse> {
@@ -86,7 +89,9 @@ class PostServiceImpl(
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)
-            val postResponse = PostResponse(it, postReply, comments, postPhotos)
+            val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!).last().image
+
+            val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 
             postList.add(postResponse)
         }
@@ -100,7 +105,8 @@ class PostServiceImpl(
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)
-            val postResponse = PostResponse(it, postReply, comments, postPhotos)
+            val photoUser = userPhotoRepository.findAllByUserId(userId = it.user?.id!!).last().image
+            val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 
             postList.add(postResponse)
         }
@@ -114,7 +120,8 @@ class PostServiceImpl(
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)
-            val postResponse = PostResponse(it, postReply, comments, postPhotos)
+            val photoUser = userPhotoRepository.findAllByUserId(userId = it.user?.id!!).last().image
+            val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 
             postList.add(postResponse)
         }
@@ -144,7 +151,9 @@ class PostServiceImpl(
                 imagesUrl.add(url)
             }
 
-            PostResponse(post, null, arrayListOf(), imagesUrl)
+            val photoUser = userPhotoRepository.findAllByUserId(userId = post.user?.id!!).last().image
+
+            PostResponse(post, null, arrayListOf(), imagesUrl, photoUser)
         } ?: throw NotFoundExeption("Post with id $postId not found")
 
     override fun delete(postId: Long) =
@@ -152,7 +161,7 @@ class PostServiceImpl(
              postRepository.delete(it)
          } ?: throw NotFoundExeption("Post with id $postId not found")
 
-    override fun getAllCategory() = PostType.values().map { it.type }
+    override fun getAllCategory() = PostType.values().map { CategoryResponse(it.type, it.name) }
 
     override fun like(postId: Long, like: Boolean) {
         postRepository.findByIdOrNull(postId)?.let { post ->
@@ -162,5 +171,27 @@ class PostServiceImpl(
 
             postRepository.save(post.copy(like = amountLike))
         } ?: throw NotFoundExeption("Post with id $postId not found")
+    }
+
+    override fun getAllUserAddressByUserAndStatus(token: String, status: Status, pageable: Pageable): List<PostResponse> {
+        val postList = arrayListOf<PostResponse>()
+        val user = userService.getUser(token)
+
+        val address = userAdressRepository.findAllByUserId(user?.id!!).lastOrNull()
+
+        address?.let {
+                postRepository.findAllByAddress_cityAndStatus(address.address?.city!!, status, pageable).forEach {
+                val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
+                val postReply = postReplyRepository.findAllByPostId(it.id!!)
+                val comments = commentRepository.findAllByPostId(it.id!!)
+                val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!).last().image
+
+                val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
+
+                postList.add(postResponse)
+            }
+        }
+
+        return postList
     }
 }

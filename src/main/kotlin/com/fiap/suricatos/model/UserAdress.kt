@@ -30,9 +30,9 @@ data class UserAdress (
     val updateAt: OffsetDateTime,
 ) {
     companion object {
-        fun toModel(user: User) = UserAdress (
+        fun toModel(user: User, address: Address?) = UserAdress (
                 user = user,
-                address = null,
+                address = address,
                 createdAt = OffsetDateTime.now(ZoneOffset.UTC),
                 updateAt =  OffsetDateTime.now(ZoneOffset.UTC)
         )
