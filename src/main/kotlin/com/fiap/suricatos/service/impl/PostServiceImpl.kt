@@ -52,7 +52,7 @@ class PostServiceImpl(
 
         val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!)
 
-        return PostResponse(post, null, arrayListOf(), imagesUrl, photoUser.last().image)
+        return PostResponse(post, null, arrayListOf(), imagesUrl, photoUser.lastOrNull()?.image)
     }
 
     override fun replyPost(postReplyRequest: PostReplyRequest, token: String): PostReply {
@@ -79,7 +79,7 @@ class PostServiceImpl(
         val comments = commentRepository.findAllByPostId(post.id!!)
         val photoUser = userPhotoRepository.findAllByUserId(userId = post.user?.id!!)
 
-        return PostResponse(post, postReply, comments, postPhotos, photoUser.last().image)
+        return PostResponse(post, postReply, comments, postPhotos, photoUser.lastOrNull()?.image)
     }
 
     override fun getAllPostByUserAndStatus(token: String, status: Status, pageable: Pageable): List<PostResponse> {
@@ -89,7 +89,7 @@ class PostServiceImpl(
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)
-            val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!).last().image
+            val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!).lastOrNull()?.image
 
             val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 
@@ -105,7 +105,7 @@ class PostServiceImpl(
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)
-            val photoUser = userPhotoRepository.findAllByUserId(userId = it.user?.id!!).last().image
+            val photoUser = userPhotoRepository.findAllByUserId(userId = it.user?.id!!).lastOrNull()?.image
             val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 
             postList.add(postResponse)
@@ -120,7 +120,7 @@ class PostServiceImpl(
             val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
             val postReply = postReplyRepository.findAllByPostId(it.id!!)
             val comments = commentRepository.findAllByPostId(it.id!!)
-            val photoUser = userPhotoRepository.findAllByUserId(userId = it.user?.id!!).last().image
+            val photoUser = userPhotoRepository.findAllByUserId(userId = it.user?.id!!).lastOrNull()?.image
             val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 
             postList.add(postResponse)
@@ -151,7 +151,7 @@ class PostServiceImpl(
                 imagesUrl.add(url)
             }
 
-            val photoUser = userPhotoRepository.findAllByUserId(userId = post.user?.id!!).last().image
+            val photoUser = userPhotoRepository.findAllByUserId(userId = post.user?.id!!).lastOrNull()?.image
 
             PostResponse(post, null, arrayListOf(), imagesUrl, photoUser)
         } ?: throw NotFoundExeption("Post with id $postId not found")
