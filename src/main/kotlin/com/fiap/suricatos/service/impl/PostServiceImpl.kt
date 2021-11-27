@@ -184,7 +184,7 @@ class PostServiceImpl(
                 val postPhotos = postPhotoRepository.findByPostId(it.id!!).map { it.image }
                 val postReply = postReplyRepository.findAllByPostId(it.id!!)
                 val comments = commentRepository.findAllByPostId(it.id!!)
-                val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!).last().image
+                val photoUser = userPhotoRepository.findAllByUserId(userId = user?.id!!).lastOrNull()?.image
 
                 val postResponse = PostResponse(it, postReply, comments, postPhotos, photoUser)
 

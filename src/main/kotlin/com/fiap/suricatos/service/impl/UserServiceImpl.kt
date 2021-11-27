@@ -64,7 +64,7 @@ class UserServiceImpl(
         val phones = userPhoneRepository.findAllByUserId(userId)
         val images = userPhotoRepository.findAllByUserId(userId)
 
-        return UserResponse(user, phones.last(), images.last().image!!)
+        return UserResponse(user, phones.lastOrNull(), images.lastOrNull()?.image!!)
     }
 
     override fun getUserLogged(token: String): UserResponse {
@@ -73,7 +73,7 @@ class UserServiceImpl(
         val phones = userPhoneRepository.findAllByUserId(user.id!!)
         val images = userPhotoRepository.findAllByUserId(user.id!!)
 
-        return UserResponse(user, phones.last(), images.last().image!!)
+        return UserResponse(user, phones.lastOrNull(), images.lastOrNull()?.image)
     }
 
     override fun getUser(token: String): User {
@@ -114,7 +114,7 @@ class UserServiceImpl(
 
         return UserResponse(
                 user,
-                phone.last(),
+                phone.lastOrNull(),
                 url
         )
     }
@@ -135,7 +135,7 @@ class UserServiceImpl(
 
             val phone = userPhoneRepository.save(UserPhone.toModel(userRequest.phone, user))
 
-            val image = userPhotoRepository.findAllByUserId(userId = user?.id!!).last()
+            val image = userPhotoRepository.findAllByUserId(userId = user?.id!!).lastOrNull()
 
             return UserResponse(
                     user,
