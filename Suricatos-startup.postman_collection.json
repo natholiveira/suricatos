@@ -1,0 +1,957 @@
+{
+	"info": {
+		"_postman_id": "e5506f0b-71c2-445b-b937-4fdc119a352c",
+		"name": "Suricatos-final",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "Criar um novo Post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODM0M30.3Q2GfNJLG3XJitepYoTHha-s86tzfeLEGUnY7_5uH_rvQ2-LfqMojaVsEvHTgmELs0p95BaPZ4hDXIJROTuauA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/Nath/Desktop/sp.png"
+								},
+								{
+									"key": "post",
+									"value": " {\n            \"slug\": \"slug\",\n            \"title\": \"title\",\n            \"description\": \"description\",\n            \"address\": {\n                \"state\": \"SP\",\n                \"number\": \"123\",\n                \"city\": \"Osasco\",\n                \"complement\": \"casa 2\",\n                \"zipCode\": \"06216170\",\n                \"street\": \"Rua Sebastião Tirador Fernades\",\n                \"neighborhood\": \"Presidente Altino\"\n            },\n            \"type\": \"ALAGAMENTO\"\n        }",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar uma resposta da prefeitura para o post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODY5M30.nBMg0F76m4JGsDKQfkOgt02f1lRXy32AykF5p4_QqTzmxu_xZG1jG1psRCucxGsTwv1YyNyL_hplzfAolMfCEw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"postId\": 1,\r\n  \"externalLink\": \"https://prefeitura.org/exerternal-link\",\r\n  \"externalProtocal\": \"123412\",\r\n  \"status\": \"IN_PROGRESS\",\r\n  \"description\": \"Envio de unidades especializadas ao local\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post-reply",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post-reply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todos os posts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxNzc2MH0.v7Dgrv2liXGZvs48Ve9xsPr0ngvATjh0yZwX01jAqT8FOKn8Jqg6ah4Kly22rftZlrx0_xBYZHVVWUF8oRLtPg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter um Post pelo Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxNzc2MH0.v7Dgrv2liXGZvs48Ve9xsPr0ngvATjh0yZwX01jAqT8FOKn8Jqg6ah4Kly22rftZlrx0_xBYZHVVWUF8oRLtPg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter um Post de usuário logado e pelo status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODY5M30.nBMg0F76m4JGsDKQfkOgt02f1lRXy32AykF5p4_QqTzmxu_xZG1jG1psRCucxGsTwv1YyNyL_hplzfAolMfCEw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/user/status/OPEN",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"user",
+								"status",
+								"OPEN"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter um Post pela cidade e pelo status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxNzc2MH0.v7Dgrv2liXGZvs48Ve9xsPr0ngvATjh0yZwX01jAqT8FOKn8Jqg6ah4Kly22rftZlrx0_xBYZHVVWUF8oRLtPg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/city/Osasco/status/IN_PROGRESS",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"city",
+								"Osasco",
+								"status",
+								"IN_PROGRESS"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar categorias de post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxNzc2MH0.v7Dgrv2liXGZvs48Ve9xsPr0ngvATjh0yZwX01jAqT8FOKn8Jqg6ah4Kly22rftZlrx0_xBYZHVVWUF8oRLtPg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/category",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODY5M30.nBMg0F76m4JGsDKQfkOgt02f1lRXy32AykF5p4_QqTzmxu_xZG1jG1psRCucxGsTwv1YyNyL_hplzfAolMfCEw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/Nath/Desktop/sp.png"
+								},
+								{
+									"key": "post",
+									"value": " {\n            \"slug\": \"slug\",\n            \"title\": \"editar2\",\n            \"description\": \"description\",\n            \"address\": {\n                \"state\": \"SP\",\n                \"number\": \"123\",\n                \"city\": \"Osasco\",\n                \"complement\": \"casa 2\",\n                \"zipCode\": \"06216170\",\n                \"street\": \"Rua Sebastião Tirador Fernades\",\n                \"neighborhood\": \"Presidente Altino\"\n            },\n            \"type\": \"ALAGAMENTO\"\n        }",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Curtir post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxNzc2MH0.v7Dgrv2liXGZvs48Ve9xsPr0ngvATjh0yZwX01jAqT8FOKn8Jqg6ah4Kly22rftZlrx0_xBYZHVVWUF8oRLtPg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"like\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/post/1/like",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"post",
+								"1",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar comentário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODY5M30.nBMg0F76m4JGsDKQfkOgt02f1lRXy32AykF5p4_QqTzmxu_xZG1jG1psRCucxGsTwv1YyNyL_hplzfAolMfCEw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\t\r\n\r\n{\r\n  \"message\": \"ola\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/comment/post/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"comment",
+								"post",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Listar usuários",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxODQ3N30.rjNWMUSduzqeEJJe2r8INIYpBqiZxxeAOUkLw4sSwKM00Huw4Fi3uW3m_G9369AVf4VQaTWMYg8-KtSNiGgAVw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter usuário por id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxODQ3N30.rjNWMUSduzqeEJJe2r8INIYpBqiZxxeAOUkLw4sSwKM00Huw4Fi3uW3m_G9369AVf4VQaTWMYg8-KtSNiGgAVw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar usuário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2NzcxM30.0OmHRbDWeuFqAOqAkG7fO8tV7ZbcUjvpgHvqlIr7x1xxcMi3DyCVIC6Tc5dpN1CFubZIGjtxXoOd8Oo91tnHNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"nathalia editado 3\",\r\n  \"birthday\": \"2021-11-21T19:46:50.598Z\",\r\n  \"type\": \"PREFEITURA\",\r\n  \"biography\": \"teste\",\r\n  \"phone\": {\r\n    \"ddd\": \"11\",\r\n    \"number\": \"235264627\",\r\n    \"type\": \"COMMERCIAL\"\r\n  },\r\n  \"email\": \"vo.nathalia12@gmail.com\",\r\n  \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar usuário sem imagem",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"nathalia\",\r\n  \"birthday\": \"2021-11-21T19:46:50.598Z\",\r\n  \"type\": \"PREFEITURA\",\r\n  \"biography\": \"teste\",\r\n  \"phone\": {\r\n    \"ddd\": \"11\",\r\n    \"number\": \"235264627\",\r\n    \"type\": \"COMMERCIAL\"\r\n  },\r\n  \"email\": \"vo.nathalia122@gmail.com\",\r\n  \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/user",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Criar um novo usuário com imagem",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Nath/Desktop/sp.png"
+								},
+								{
+									"key": "user",
+									"value": "{\n  \"name\": \"nathalia\",\n  \"birthday\": \"2021-11-21T19:46:50.598Z\",\n  \"type\": \"PREFEITURA\",\n  \"biography\": \"teste\",\n  \"phone\": {\n    \"ddd\": \"11\",\n    \"number\": \"235264627\",\n    \"type\": \"COMMERCIAL\"\n  },\n  \"email\": \"vo.nathalia126@gmail.com\",\n  \"password\": \"12345\"\n}",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/user/image",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"user",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar foto usuário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODM0M30.3Q2GfNJLG3XJitepYoTHha-s86tzfeLEGUnY7_5uH_rvQ2-LfqMojaVsEvHTgmELs0p95BaPZ4hDXIJROTuauA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Nath/Desktop/sp.png"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user/image",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter usuário logado",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODM0M30.3Q2GfNJLG3XJitepYoTHha-s86tzfeLEGUnY7_5uH_rvQ2-LfqMojaVsEvHTgmELs0p95BaPZ4hDXIJROTuauA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/user/logged",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"user",
+								"logged"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Login | Obter token JWT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"vo.nathalia12@gmail.com\",\r\n    \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/login",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login | Obter token JWT",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"vo.nathalia12@gmail.com\",\r\n    \"password\": \"12345\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://suricatos-fiap.herokuapp.com/login",
+									"protocol": "https",
+									"host": [
+										"suricatos-fiap",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 24 Nov 2021 01:43:28 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzcxODgwOH0.9-WCTa2jWcD6nSBGR1ytuorx0_K6a16dFh5kmOka0cCI-i80BXbXqaKYhok6MGyUS8XUFu1VgqegvuQ2-uew1Q"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "comment",
+			"item": [
+				{
+					"name": "Criar comentário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2ODY5M30.nBMg0F76m4JGsDKQfkOgt02f1lRXy32AykF5p4_QqTzmxu_xZG1jG1psRCucxGsTwv1YyNyL_hplzfAolMfCEw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\t\r\n\r\n{\r\n  \"message\": \"ola\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/comment/post/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"comment",
+								"post",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Comentário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2OTM2NX0.vfMgdlGE1o0viyXKi14yxnrt_YsgBBOtJ7g0OHmfcBOzlgRKwfvKq7aQCyF_1ZDjuawcnoCWjpugAKQ0-NV3UA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\t\r\n\r\n{\r\n  \"message\": \"ola2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/comment/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"comment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listar comentários da post",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2OTM2NX0.vfMgdlGE1o0viyXKi14yxnrt_YsgBBOtJ7g0OHmfcBOzlgRKwfvKq7aQCyF_1ZDjuawcnoCWjpugAKQ0-NV3UA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\t\r\n\r\n{\r\n  \"message\": \"ola2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/comment/post/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"comment",
+								"post",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Excluir comentário",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2by5uYXRoYWxpYTEyQGdtYWlsLmNvbSIsImV4cCI6MTYzNzc2OTM2NX0.vfMgdlGE1o0viyXKi14yxnrt_YsgBBOtJ7g0OHmfcBOzlgRKwfvKq7aQCyF_1ZDjuawcnoCWjpugAKQ0-NV3UA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\t\r\n\r\n{\r\n  \"message\": \"ola2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://suricatos-fiap.herokuapp.com/api/comment/1",
+							"protocol": "https",
+							"host": [
+								"suricatos-fiap",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"comment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
